@@ -1,5 +1,9 @@
 import Link from "next/link";
 
+type petsSearchQuery = {
+  sortBy: string;
+};
+
 type petsType = {
   name: string;
   id: number;
@@ -32,10 +36,43 @@ let pets: petsType[] = [
   },
 ];
 
-export default function Page() {
+function comparePets(a: petsType, b: petsType) {
+  if (a.name < b.name) {
+    return -1;
+  } else if (a.name > b.name) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+export default function Page({
+  searchParams,
+}: {
+  searchParams: petsSearchQuery;
+}) {
+  let sortedPets = [...pets];
+
+  if (searchParams.sortBy == "asc") {
+    sortedPets.sort(comparePets);
+  } else if (searchParams.sortBy == "desc") {
+    sortedPets.sort(comparePets).reverse();
+  }
+
   return (
     <div>
       <h4>this is my animals page</h4>
+      <p>{searchParams.sortBy}</p>
+      <br />
+      <Link href="/animals">Remove the sort</Link>
+      <br />
+      <Link href="/animals?sortBy=asc">Sort by ascending</Link>
+      <br />
+      <Link href="/animals?sortBy=desc">Sort by descending</Link>
+      <br />
+      <br />
+      <br />
+
       {pets.map((pet) => {
         return (
           <div key={pet.id}>
